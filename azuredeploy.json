@@ -85,13 +85,13 @@
     "resources": [
         {
             "apiVersion": "2018-11-01",
-            "name": "[parameters('siteName')]",
+            "name": "[parameters('hostingPlanName')]",
             "type": "Microsoft.Web/serverfarms",
             "location": "[parameters('location')]",
             "kind": "linux",
             "tags": null,
             "properties": {
-                "name": "[parameters('siteName')]",
+                "name": "[parameters('hostingPlanName')]",
                 "workerSize": "[parameters('workerSize')]",
                 "workerSizeId": "[parameters('workerSizeId')]",
                 "numberOfWorkers": "[parameters('numberOfWorkers')]",
