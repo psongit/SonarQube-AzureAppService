@@ -1,21 +1,25 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "hostingPlanName": {
             "type": "string",
             "minLength": 1,
-            "defaultValue": "SonarQubeAppServicePlan"
+            "defaultValue": ""
         },
-        "siteLocation": {
+        "location": {
             "type": "string",
-            "defaultValue": "North Central US"
+            "defaultValue": ""
         },
         "siteName": {
             "type": "string",
-            "defaultValue": "SonarQubeAppService"
+            "defaultValue": ""
         },
-        "skuName": {
+        "sku": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "skuCode": {
             "defaultValue": "B1",
             "allowedValues": [
                 "B1",
@@ -34,11 +38,23 @@
             "type": "string"
         },
         "repoUrl": {
-            "defaultValue": "https://github.com/vanderby/SonarQube-AzureAppService",
+            "defaultValue": "https://github.com/psongit/SonarQube-AzureAppService",
             "type": "string"
         },
         "branch": {
             "defaultValue": "master",
+            "type": "string"
+        },
+        "numberOfWorkers": {
+            "defaultValue": "0",
+            "type": "string"
+        },
+        "workerSize": {
+            "defaultValue": "0",
+            "type": "string"
+        },
+        "workerSizeId": {
+            "defaultValue": "0",
             "type": "string"
         },
         "SonarQube Edition": {
@@ -57,80 +73,84 @@
             "metadata": {
                 "description": "Specific version of SQ to download e.g. 7.9.1 or 8.0. Leave blank or set to 'Latest' for most recent version."
             }
+        },
+        "linuxFxVersion": {
+            "type": "string",
+            "defaultValue": "Latest"
         }
     },
     "variables": {
-        "deploymentTelemetryKey": "e15aa4db-a1cc-4622-844f-e7dd01596983"
+        "deploymentTelemetryKey": "2115250f-f5f6-4dd0-b51c-993a45e1aeb0"
     },
     "resources": [
         {
-            "apiVersion": "2016-09-01",
-            "name": "[parameters('hostingPlanName')]",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('siteName')]",
             "type": "Microsoft.Web/serverfarms",
-            "location": "[parameters('siteLocation')]",
-            "sku": {
-                "name": "[parameters('skuName')]"
-            },
+            "location": "[parameters('location')]",
+            "kind": "linux",
+            "tags": null,
             "properties": {
-                "name": "[parameters('hostingPlanName')]"
+                "name": "[parameters('siteName')]",
+                "workerSize": "[parameters('workerSize')]",
+                "workerSizeId": "[parameters('workerSizeId')]",
+                "numberOfWorkers": "[parameters('numberOfWorkers')]",
+                "reserved": true,
+                "zoneRedundant": false
+            },
+            "sku": {
+                "Tier": "[parameters('sku')]",
+                "Name": "[parameters('skuCode')]"
             }
         },
         {
-            "apiVersion": "2016-08-01",
+            "apiVersion": "2018-11-01",
             "name": "[parameters('siteName')]",
             "type": "Microsoft.Web/sites",
-            "location": "[parameters('siteLocation')]",
+            "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
             ],
             "properties": {
                 "name": "[parameters('siteName')]",
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('hostingPlanName'))]",
-                "clientAffinityEnabled": false
-            },
-            "resources": [
-                {
-                    "name": "web",
-                    "type": "config",
-                    "apiVersion": "2016-08-01",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', parameters('siteName'))]"
-                    ],
-                    "properties": {
-                        "alwaysOn": false,
-                        "javaVersion": "11",
-                        "javaContainer": "TOMCAT",
-                        "javaContainerVersion": "9.0"
-                    }
+                "clientAffinityEnabled": false,
+                "siteConfig": {
+                    "appSettings": [],
+                    "linuxFxVersion": "[parameters('linuxFxVersion')]",
+                    "alwaysOn": "false"
                 },
-                {
-                    "name": "appsettings",
-                    "type": "config",
-                    "apiVersion": "2016-08-01",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/sites', parameters('siteName'))]"
-                    ],
-                    "properties": {
-                        "Deployment_Telemetry_Instrumentation_Key": "[variables('deploymentTelemetryKey')]",
-                        "SonarQubeEdition": "[parameters('SonarQube Edition')]",
-                        "SonarQubeVersion": "[parameters('SonarQube Version')]"
+                "virtualNetworkSubnetId": null,
+                "resources": [
+                    {
+                        "name": "appsettings",
+                        "type": "config",
+                        "apiVersion": "2016-08-01",
+                        "dependsOn": [
+                            "[resourceId('Microsoft.Web/sites', parameters('siteName'))]"
+                        ],
+                        "properties": {
+                            "Deployment_Telemetry_Instrumentation_Key": "[variables('deploymentTelemetryKey')]",
+                            "SonarQubeEdition": "[parameters('SonarQube Edition')]",
+                            "SonarQubeVersion": "[parameters('SonarQube Version')]"
+                        }
+                    },
+                    {
+                        "apiVersion": "2016-08-01",
+                        "name": "web",
+                        "type": "sourcecontrols",
+                        "dependsOn": [
+                            "[resourceId('Microsoft.Web/Sites', parameters('siteName'))]",
+                            "[concat('Microsoft.Web/Sites/', parameters('siteName'), '/config/web')]"
+                        ],
+                        "properties": {
+                            "RepoUrl": "[parameters('repoUrl')]",
+                            "branch": "[parameters('branch')]",
+                            "IsManualIntegration": true
+                        }
                     }
-                },
-                {
-                    "apiVersion": "2016-08-01",
-                    "name": "web",
-                    "type": "sourcecontrols",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Web/Sites', parameters('siteName'))]",
-                        "[concat('Microsoft.Web/Sites/', parameters('siteName'), '/config/web')]"
-                    ],
-                    "properties": {
-                        "RepoUrl": "[parameters('repoUrl')]",
-                        "branch": "[parameters('branch')]",
-                        "IsManualIntegration": true
-                    }
-                }
-            ]
+                ]
+            }
         }
     ]
 }
