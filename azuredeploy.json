@@ -77,6 +77,18 @@
         "linuxFxVersion": {
             "type": "string",
             "defaultValue": "Latest"
+        },
+        "databaseConnectionString": {
+            "type": "string",
+            "defaultValue": "Latest"
+        },
+        "databaseUserName": {
+            "type": "string",
+            "defaultValue": "Latest"
+        },
+        "databasepassword": {
+            "type": "string",
+            "defaultValue": "Latest"
         }
     },
     "variables": {
@@ -133,9 +145,9 @@
                             "Deployment_Telemetry_Instrumentation_Key": "[variables('deploymentTelemetryKey')]",
                             "SonarQubeEdition": "[parameters('SonarQube Edition')]",
                             "SonarQubeVersion": "[parameters('SonarQube Version')]",
-                            "sonar.jdbc.url": "",
-                            "sonar.jdbc.username": "",
-                            "sonar.jdbc.password": ""
+                            "sonar.jdbc.url": "[parameters('databaseConnectionString')]",
+                            "sonar.jdbc.username": "[parameters('databaseUserName')]",
+                            "sonar.jdbc.password": "[parameters('databasepassword')]"
                         }
                     },
                     {
