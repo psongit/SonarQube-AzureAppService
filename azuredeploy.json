@@ -132,7 +132,10 @@
                         "properties": {
                             "Deployment_Telemetry_Instrumentation_Key": "[variables('deploymentTelemetryKey')]",
                             "SonarQubeEdition": "[parameters('SonarQube Edition')]",
-                            "SonarQubeVersion": "[parameters('SonarQube Version')]"
+                            "SonarQubeVersion": "[parameters('SonarQube Version')]",
+                            "sonar.jdbc.url": "",
+                            "sonar.jdbc.username": "",
+                            "sonar.jdbc.password": ""
                         }
                     },
                     {
