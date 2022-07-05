@@ -5,19 +5,19 @@
         "hostingPlanName": {
             "type": "string",
             "minLength": 1,
-            "defaultValue": ""
+            "defaultValue": "SonarQubePlan"
         },
         "location": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "South India"
         },
         "siteName": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "proarc-sonarqube-app"
         },
         "sku": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "Basic"
         },
         "skuCode": {
             "defaultValue": "B1",
@@ -38,7 +38,7 @@
             "type": "string"
         },
         "repoUrl": {
-            "defaultValue": "https://github.com/psongit/SonarQube-AzureAppService",
+            "defaultValue": "https://github.com/psongit/SonarQube-AzureAppService.git",
             "type": "string"
         },
         "branch": {
@@ -46,15 +46,15 @@
             "type": "string"
         },
         "numberOfWorkers": {
-            "defaultValue": "0",
+            "defaultValue": "1",
             "type": "string"
         },
         "workerSize": {
-            "defaultValue": "0",
+            "defaultValue": "1",
             "type": "string"
         },
         "workerSizeId": {
-            "defaultValue": "0",
+            "defaultValue": "1",
             "type": "string"
         },
         "SonarQube Edition": {
@@ -76,19 +76,19 @@
         },
         "linuxFxVersion": {
             "type": "string",
-            "defaultValue": "Latest"
+            "defaultValue": "TOMCAT|10.0-java17"
         },
         "databaseConnectionString": {
             "type": "string",
-            "defaultValue": "Latest"
+            "defaultValue": ""
         },
         "databaseUserName": {
             "type": "string",
-            "defaultValue": "Latest"
+            "defaultValue": ""
         },
-        "databasepassword": {
+        "databasePassword": {
             "type": "string",
-            "defaultValue": "Latest"
+            "defaultValue": ""
         }
     },
     "variables": {
@@ -130,7 +130,7 @@
                 "siteConfig": {
                     "appSettings": [],
                     "linuxFxVersion": "[parameters('linuxFxVersion')]",
-                    "alwaysOn": "false"
+                    "alwaysOn": false
                 },
                 "virtualNetworkSubnetId": null,
                 "resources": [
@@ -147,11 +147,11 @@
                             "SonarQubeVersion": "[parameters('SonarQube Version')]",
                             "sonar.jdbc.url": "[parameters('databaseConnectionString')]",
                             "sonar.jdbc.username": "[parameters('databaseUserName')]",
-                            "sonar.jdbc.password": "[parameters('databasepassword')]"
+                            "sonar.jdbc.password": "[parameters('databasePassword')]"
                         }
                     },
                     {
-                        "apiVersion": "2016-08-01",
+                        "apiVersion": "2020-06-01",
                         "name": "web",
                         "type": "sourcecontrols",
                         "dependsOn": [

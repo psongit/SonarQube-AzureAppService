@@ -18,7 +18,7 @@
         "value": "B1"
       },
       "repoUrl": {
-        "value": "https://github.com/psongit/SonarQube-AzureAppService"
+        "value": "https://github.com/psongit/SonarQube-AzureAppService.git"
       },
       "branch": {
         "value": "master"
@@ -27,10 +27,10 @@
         "value": "1"
       },
       "workerSize": {
-        "value": "0"
+        "value": "1"
       },
       "workerSizeId": {
-        "value": "0"
+        "value": "1"
       },
       "SonarQube Edition": {
         "value": "Community"
